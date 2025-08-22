@@ -7,8 +7,8 @@ class Employee(models.Model):
     phone_number = models.CharField(max_length=20)
     email = models.CharField(max_length=100)
     hire_date = models.DateField()
-    project_assigned = models.BooleanField(default= False, blank=True)
-    state = models.BooleanField(default= True, blank=True)
+    project_assigned = models.BooleanField(default= False)
+    state = models.BooleanField(default= True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

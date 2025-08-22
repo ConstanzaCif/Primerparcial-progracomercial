@@ -12,7 +12,7 @@ class Project(models.Model):
     )
     project_name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    state = models.BooleanField(default=True, blank=True)
+    state = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -23,7 +23,7 @@ class Assigments(models.Model):
     assignment_date = models.DateField(auto_now_add=True)
     employee = models.ForeignKey("empleados.Employee", on_delete=models.PROTECT, related_name="assignments")
     project = models.ForeignKey(Project, on_delete=models.PROTECT, related_name="assignments")
-    state = models.BooleanField(default=True, blank=True)
+    state = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
