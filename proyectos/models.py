@@ -12,7 +12,7 @@ class Project(models.Model):
     )
     project_name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    state = models.BooleanField()
+    state = models.BooleanField(default=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

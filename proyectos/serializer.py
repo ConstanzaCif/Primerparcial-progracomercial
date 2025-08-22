@@ -29,6 +29,8 @@ class AssignSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         assignment = super().create(validated_data)
+        assignment.employee.project_assigned = True
+        assignment.employee.save(update_fields=['project_assigned'])
 
         if assignment.state and not assignment.employee.project_assigned:
             assignment.employee.project_assigned = True

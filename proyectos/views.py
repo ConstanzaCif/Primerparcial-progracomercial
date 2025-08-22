@@ -5,29 +5,39 @@ from .serializer import ProjectSerializer, AssignSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
+from django.db import transaction
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     
     
-    def destroy(self, request, *args, **kwargs):
-        project = self.get_object()
-        project.state = False
-        project.save()
-        return Response({'detalle':'Proyecto desactivado'}, status=status.HTTP_200_OK)
+
+    
+    
 
 class AssigmentsViewset(viewsets.ModelViewSet):
     queryset = Assigments.objects.all()
     serializer_class = AssignSerializer
     
+    @transaction.atomic
     def destroy(self, request, *args, **kwargs):
-        assigment = self.get_object()
-        assigment.state = False
-        assigment.save()
-        employee = assigment.employee()
-        employee.project_assigned = False
-        employee.save()
-        return Response({'detalle':'Asignacion desactivado'}, status=status.HTTP_200_OK)
+            assignment = self.get_object()
+            was_active = assignment.state
+            emp = assignment.employee           
+
+            assignment.state = False
+            assignment.save(update_fields=['state'])
+
+            if was_active:
+                still_active = Assigments.objects.filter(
+                    employee=emp, state=True
+                ).exclude(pk=assignment.pk).exists()
+
+                if not still_active and bool(emp.project_assigned):
+                    emp.project_assigned = False
+                    emp.save(update_fields=['project_assigned'])
+
+            return Response({'detail': 'Asignación desactivada'}, status=status.HTTP_200_OK)
 
 # Create your views here.
